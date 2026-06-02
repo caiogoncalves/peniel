@@ -1,12 +1,12 @@
-import { getDailyWord } from "@/lib/getWord";
+import { getTodayCard } from "@/lib/kv";
 import StarField from "@/components/StarField";
 import WordCard from "@/components/WordCard";
 import PixSection from "@/components/PixSection";
 
-export const revalidate = 86400;
+export const revalidate = 3600; // revalida de hora em hora; n8n atualiza o KV
 
 export default async function Home() {
-  const word = await getDailyWord();
+  const card = await getTodayCard();
   const pixKey = process.env.NEXT_PUBLIC_PIX_KEY ?? "";
 
   const today = new Date().toLocaleDateString("pt-BR", {
@@ -22,27 +22,31 @@ export default async function Home() {
     >
       <StarField />
 
-      {/* Header */}
       <header className="relative z-10 text-center mb-10">
         <h1
           className="font-display tracking-widest uppercase mb-1"
-          style={{ color: "#d4af37", fontSize: "clamp(2rem, 6vw, 3.5rem)", fontWeight: 300, letterSpacing: "0.25em" }}
+          style={{
+            color: "#d4af37",
+            fontSize: "clamp(2rem, 6vw, 3.5rem)",
+            fontWeight: 300,
+            letterSpacing: "0.25em",
+          }}
         >
           Peniel
         </h1>
-        <p className="font-body text-xs tracking-[0.3em] uppercase" style={{ color: "#4a4538" }}>
+        <p
+          className="font-body text-xs tracking-[0.3em] uppercase"
+          style={{ color: "#4a4538" }}
+        >
           {today}
         </p>
       </header>
 
-      {/* Palavra do dia */}
       <div className="relative z-10 w-full max-w-xl">
-        <WordCard word={word} />
-
+        <WordCard card={card} />
         {pixKey && <PixSection pixKey={pixKey} />}
       </div>
 
-      {/* Footer */}
       <footer className="relative z-10 mt-12 text-center">
         <p className="font-body text-xs" style={{ color: "#2a2520" }}>
           Palavra renovada a cada amanhecer · peniel.faith
