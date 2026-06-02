@@ -23,9 +23,16 @@ export default function WordCard({ card }: Props) {
     if (navigator.share) {
       await navigator.share({ title: "Peniel · Palavra do Dia", text, url });
     } else {
-      await navigator.clipboard.writeText(`${text}`);
+      await navigator.clipboard.writeText(text);
       alert("Link copiado! Cole no Instagram.");
     }
+  };
+
+  const downloadImage = () => {
+    const a = document.createElement("a");
+    a.href = "/api/og?download=true";
+    a.download = "peniel-palavra-do-dia.png";
+    a.click();
   };
 
   return (
@@ -148,6 +155,24 @@ export default function WordCard({ card }: Props) {
               Instagram
             </button>
           </div>
+
+          {/* Download para Instagram */}
+          <button
+            onClick={downloadImage}
+            className="w-full flex items-center justify-center gap-2 mt-2 py-2.5 rounded-xl font-body text-xs tracking-wide transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+            style={{
+              background: "rgba(212,175,55,0.08)",
+              border: "1px solid rgba(212,175,55,0.25)",
+              color: "#d4af37",
+            }}
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Salvar imagem com marca d&apos;água
+          </button>
         </div>
       </div>
     </div>
