@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+:root {
+  --gold: #d4af37;
+  --gold-light: #f0d060;
+  --bg: #0a0a0f;
+}
+
+@theme inline {
+  --font-display: var(--font-cormorant);
+  --font-body: var(--font-lato);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: #e8e0d0;
+  font-family: var(--font-lato), sans-serif;
+  margin: 0;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+@keyframes float-up {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-float-up {
+  animation: float-up 0.8s ease forwards;
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  animation: twinkle var(--duration, 3s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.font-display {
+  font-family: var(--font-cormorant), Georgia, serif;
+}
+
+.gold-border {
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.gold-glow {
+  box-shadow: 0 0 40px rgba(212, 175, 55, 0.08), 0 4px 60px rgba(0, 0, 0, 0.5);
+}
