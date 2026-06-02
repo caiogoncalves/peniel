@@ -1,4 +1,4 @@
-import { kv } from "@vercel/kv";
+import { get } from "@vercel/edge-config";
 
 export interface DailyCard {
   palavra: string;
@@ -7,10 +7,10 @@ export interface DailyCard {
   reflexao: string;
   imageUrl: string;
   imagePrompt: string;
-  date: string; // YYYY-MM-DD
+  date: string;
 }
 
-const KV_KEY = "peniel:card:today";
+const KEY = "daily_card";
 
 const FALLBACK: DailyCard = {
   palavra: "Você não está sozinho nessa jornada.",
@@ -25,14 +25,34 @@ const FALLBACK: DailyCard = {
 
 export async function getTodayCard(): Promise<DailyCard> {
   try {
-    const card = await kv.get<DailyCard>(KV_KEY);
+    const card = await get<DailyCard>(KEY);
     return card ?? FALLBACK;
   } catch {
     return FALLBACK;
   }
 }
 
+// Escrita via REST API da Vercel (Edge Config é read-only pelo SDK)
 export async function setTodayCard(card: DailyCard): Promise<void> {
-  // Expira em 36h para cobrir delay do cron
-  await kv.set(KV_KEY, card, { ex: 60 * 60 * 36 });
+  const edgeConfigId = process.env.EDGE_CONFIG_ID!;
+  const vercelToken = process.env.VERCEL_API_TOKEN!;
+
+  const res = await fetch(
+    `https://api.vercel.com/v1/edge-config/${edgeConfigId}/items`,
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${vercelToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        items: [{ operation: "upsert", key: KEY, value: card }],
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Edge Config write failed: ${err}`);
+  }
 }
